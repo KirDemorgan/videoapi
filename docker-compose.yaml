@@ -1,0 +1,57 @@
+services:
+  video-service:
+    image: video-service:latest
+    environment:
+      DB_USERNAME: 20e6ebfc4bad
+      DB_PASSWORD: 89519535-d674-417a-bdf5-a5cef39de965
+      DB_NAME: video_service
+      DB_HOST: postgres
+      DB_PORT: 5432
+    build:
+      context: .
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - minio
+      - postgres
+
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: 20e6ebfc4bad
+      POSTGRES_PASSWORD: 89519535-d674-417a-bdf5-a5cef39de965
+      POSTGRES_DB: video_service
+    healthcheck:
+      test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+
+
+  minio:
+    image: minio/minio:latest
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: 7fcc12fdc2d1
+      MINIO_ROOT_PASSWORD: 96a19220ee73
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+
+volumes:
+  postgres_data:
+  minio_data:
