@@ -7,6 +7,9 @@ services:
       DB_NAME: video_service
       DB_HOST: postgres
       DB_PORT: 5432
+      MINIO_ROOT_USER: 7fcc12fdc2d1
+      MINIO_ROOT_PASSWORD: 96a19220ee73
+      MINIO_ENDPOINT: http://minio:9000
     build:
       context: .
       args:

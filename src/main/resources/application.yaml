@@ -17,3 +17,8 @@ server:
 springdoc:
   swagger-ui:
     path: /docs
+
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+  root-user: ${MINIO_ROOT_USER:demorgan}
+  root-password: ${MINIO_ROOT_PASSWORD:password}
