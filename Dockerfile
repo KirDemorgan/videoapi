@@ -12,6 +12,7 @@ RUN java -Djarmode=layertools -jar app.jar extract
 FROM bellsoft/liberica-openjre-debian:23.0.1
 VOLUME /tmp
 RUN useradd -ms /bin/bash spring-user
+RUN apt-get update && apt-get install -y ffmpeg
 USER spring-user
 COPY --from=layers /application/dependencies/ ./
 COPY --from=layers /application/spring-boot-loader/ ./

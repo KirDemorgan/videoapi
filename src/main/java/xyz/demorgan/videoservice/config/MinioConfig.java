@@ -27,16 +27,15 @@ public class MinioConfig {
                 .build();
     }
 
-    @PostConstruct
-    public void init() {
+    @Bean
+    public boolean initializeBucket(MinioClient minioClient) {
         try {
-            MinioClient minioClient = minioClient();
             String bucketName = "videos";
-
             boolean isExist = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
             if (!isExist) {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
             }
+            return true;
         } catch (Exception e) {
             throw new RuntimeException("Error creating bucket", e);
         }
