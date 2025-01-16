@@ -1,6 +1,11 @@
 spring:
   application:
     name: video-service
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1GB
+      max-request-size: 1GB
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -13,6 +18,8 @@ spring:
 
 server:
   port: 8080
+  tomcat:
+    uri-encoding: utf-8
 
 springdoc:
   swagger-ui:

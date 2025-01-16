@@ -11,17 +11,20 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import xyz.demorgan.videoservice.entity.VideoData;
 import xyz.demorgan.videoservice.filter.VideoDataFilter;
+import xyz.demorgan.videoservice.repos.VideoDataRepository;
 import xyz.demorgan.videoservice.service.VideoDataService;
 import xyz.demorgan.videoservice.service.VideoService;
 
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
@@ -33,6 +36,7 @@ public class VideoController {
 
     VideoDataService videoDataService;
     VideoService videoService;
+    VideoDataRepository videoDataRepository;
 
     @GetMapping
     @Operation(summary = "Получить все видео", description = "Получить все видео с возможностью фильтрации и пагинации.")
@@ -50,6 +54,7 @@ public class VideoController {
         InputStream videoStream = videoService.getVideo(fileName);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
                 .body(new InputStreamResource(videoStream));
     }
 
@@ -58,14 +63,7 @@ public class VideoController {
     public ResponseEntity<VideoData> uploadVideo(@RequestBody MultipartFile file) {
         log.info("Uploading video{}", file.getOriginalFilename());
 
-        videoService.uploadVideo(file);
-
-        VideoData videoData = new VideoData();
-        VideoData
-                .builder()
-                .name(file.getOriginalFilename())
-                .createdAt(LocalDateTime.now())
-                .build();
+        VideoData videoData =  videoService.uploadVideo(file);
 
         return ResponseEntity.ok().body(videoData);
     }
